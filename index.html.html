@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>NADER-DOWNLOADER | محمل تيك توك الخارق</title>
+	<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;900&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+	<style>
+		:root {
+			--accent: #ff0050;
+			/* لون تيك توك الشهير */
+			--cyan: #00f2ea;
+			--bg: #0d0d12;
+			--glass: rgba(255, 255, 255, 0.05);
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			background-color: var(--bg);
+			color: white;
+			font-family: 'Tajawal', sans-serif;
+			display: flex;
+			flex-direction: column;
+			min-height: 100vh;
+		}
+
+		/* خلفية نيون متحركة */
+		.neon-bg {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: radial-gradient(circle at 20% 30%, #ff005015 0%, transparent 40%),
+				radial-gradient(circle at 80% 70%, #00f2ea15 0%, transparent 40%);
+			z-index: -1;
+		}
+
+		header {
+			padding: 30px;
+			text-align: center;
+		}
+
+		.logo {
+			font-family: 'Orbitron', sans-serif;
+			font-size: 2.5rem;
+			letter-spacing: 5px;
+			background: linear-gradient(to right, var(--accent), var(--cyan));
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			text-shadow: 0 0 20px rgba(255, 0, 80, 0.3);
+		}
+
+		.container {
+			flex: 1;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			padding: 20px;
+		}
+
+		/* صندوق التحميل الزجاجي */
+		.downloader-box {
+			background: var(--glass);
+			border: 1px solid rgba(255, 255, 255, 0.1);
+			backdrop-filter: blur(20px);
+			padding: 40px;
+			border-radius: 30px;
+			width: 100%;
+			max-width: 700px;
+			text-align: center;
+			box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+		}
+
+		.title {
+			font-size: 1.8rem;
+			margin-bottom: 30px;
+			color: #eee;
+		}
+
+		.title span {
+			color: var(--accent);
+			font-weight: 900;
+		}
+
+		.input-group {
+			position: relative;
+			margin-bottom: 25px;
+		}
+
+		input {
+			width: 100%;
+			padding: 20px 25px;
+			background: rgba(0, 0, 0, 0.3);
+			border: 2px solid rgba(255, 255, 255, 0.1);
+			border-radius: 15px;
+			color: white;
+			font-size: 1.1rem;
+			outline: none;
+			transition: 0.3s;
+		}
+
+		input:focus {
+			border-color: var(--cyan);
+			box-shadow: 0 0 15px rgba(0, 242, 234, 0.2);
+		}
+
+		.download-btn {
+			width: 100%;
+			padding: 18px;
+			background: linear-gradient(45deg, var(--accent), var(--cyan));
+			border: none;
+			border-radius: 15px;
+			color: white;
+			font-size: 1.2rem;
+			font-weight: bold;
+			cursor: pointer;
+			transition: 0.3s transform;
+		}
+
+		.download-btn:hover {
+			transform: scale(1.02);
+			box-shadow: 0 0 30px rgba(255, 0, 80, 0.4);
+		}
+
+		/* منطقة النتائج */
+		#result-area {
+			display: none;
+			margin-top: 30px;
+			padding: 20px;
+			border-radius: 15px;
+			background: rgba(255, 255, 255, 0.05);
+		}
+
+		.loader-bar {
+			height: 4px;
+			width: 0%;
+			background: var(--cyan);
+			box-shadow: 0 0 10px var(--cyan);
+			transition: width 0.5s;
+		}
+
+		.footer-text {
+			margin-top: 40px;
+			opacity: 0.6;
+			font-size: 0.9rem;
+		}
+
+		.owner-tag {
+			color: var(--cyan);
+			font-weight: bold;
+			font-family: 'Orbitron';
+		}
+	</style>
+</head>
+
+<body>
+
+	<div class="neon-bg"></div>
+
+	<header>
+		<div class="logo">NADER FAHD</div>
+	</header>
+
+	<div class="container">
+		<div class="downloader-box">
+			<h2 class="title">تحميل فيديوهات <span>TikTok</span> بدون علامة مائية</h2>
+
+			<div class="input-group">
+				<input type="text" id="videoUrl" placeholder="ضع رابط الفيديو هنا...">
+			</div>
+
+			<button class="download-btn" onclick="startDownload()">إبدأ الاستخراج الذكي</button>
+
+			<div id="result-area">
+				<p id="status-text" style="margin-bottom: 10px;">جاري الاتصال بالسيرفرات...</p>
+				<div style="background: #222; height: 4px; width: 100%; border-radius: 10px;">
+					<div id="loader" class="loader-bar"></div>
+				</div>
+			</div>
+
+			<p class="footer-text">نظام مطور بواسطة <span class="owner-tag">NADER AL-OTAIBI</span></p>
+		</div>
+	</div>
+
+	<script>
+		function startDownload() {
+			const url = document.getElementById('videoUrl').value;
+			const resultArea = document.getElementById('result-area');
+			const loader = document.getElementById('loader');
+			const statusText = document.getElementById('status-text');
+
+			if (!url.includes('tiktok.com')) {
+				alert('عذراً يا نادر، يرجى وضع رابط تيك توك صحيح!');
+				return;
+			}
+
+			resultArea.style.display = 'block';
+
+			// محاكاة عملية التحميل
+			let progress = 0;
+			const interval = setInterval(() => {
+				progress += Math.random() * 20;
+				if (progress > 100) progress = 100;
+
+				loader.style.width = progress + '%';
+
+				if (progress < 30) statusText.innerHTML = "🔍 جاري فحص الرابط...";
+				else if (progress < 60) statusText.innerHTML = "⚙️ جاري حذف العلامة المائية...";
+				else if (progress < 90) statusText.innerHTML = "🛰️ جاري تحضير ملف MP4...";
+				else statusText.innerHTML = "✅ الفيديو جاهز للتحميل!";
+
+				if (progress === 100) {
+					clearInterval(interval);
+					setTimeout(() => {
+						alert('تم استخراج الفيديو بنجاح! (هذه نسخة تجريبية لواجهة الموقع)');
+					}, 500);
+				}
+			}, 600);
+		}
+	</script>
+</body>
+
+</html>
